@@ -137,6 +137,8 @@ namespace GetItemLink
                 RecordDirectory Directory = (typeof(InventoryItemUI).GetField("Directory", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Item) as RecordDirectory);
                 if (Directory != null)
                     record = Directory.LinkRecord;
+                if (record == null)
+                    record = Directory.DirectoryRecord;
             }
             if (record != null)
             {
