@@ -1,6 +1,9 @@
 # GetItemLink
 
-A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that adds buttons to your inventory for cloud url and item link.
+A [NeosModLoader](https://github.com/zkxs/NeosModLoader) mod for [Neos VR](https://neos.com/) that adds buttons to your inventory to copy an items cloud url and/or item link to your clipboard.
+
+the potato button gives you the record link
+the cheese button gives you the asset uri
 
 ## Installation
 1. Install [NeosModLoader](https://github.com/zkxs/NeosModLoader).
