@@ -12,7 +12,7 @@ namespace GetItemLink
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
-        public override string Version => "1.0.0";
+        public override string Version => "1.1.0";
         public override string Link => "https://github.com/eia485/NeosGetItemLink/";
         public override void OnEngineInit()
         {
@@ -69,6 +69,8 @@ namespace GetItemLink
                             if (!buttonState)
                             {
                                 buttonState = (directory.LinkRecord != null);
+                                if (!buttonState)
+                                    buttonState = directory.DirectoryRecord.IsPublic;
                             }
                         }
                         for (int i = 0; i < buttonRoot.ChildrenCount; i++)
