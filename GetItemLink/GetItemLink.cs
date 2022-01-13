@@ -64,9 +64,23 @@ namespace GetItemLink
                         {
                             if (buttonRoot[i].Name == "AssetURI" | buttonRoot[i].Name == "URL")
                             {
+                                
                                 Button button = buttonRoot[i].GetComponent<Button>();
                                 if (button != null)
+                                {
                                     button.Enabled = __instance.SelectedInventoryItem != null;
+                                    if (__instance.SelectedInventoryItem == null)
+                                    {
+                                        button.Enabled = false;
+                                    }
+                                    else
+                                    {
+                                        RecordDirectory directory = Traverse.Create(__instance.SelectedInventoryItem).Field("Directory")
+                                            .GetValue<RecordDirectory>();
+                                        button.Enabled = directory == null;
+                                    }
+                                }
+                                    
                             }
                         }
                     }
