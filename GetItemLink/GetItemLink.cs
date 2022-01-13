@@ -65,8 +65,8 @@ namespace GetItemLink
                             if (buttonRoot[i].Name == "AssetURI" | buttonRoot[i].Name == "URL")
                             {
                                 Button button = buttonRoot[i].GetComponent<Button>();
-                                if ((button != null) & (__instance.SelectedInventoryItem == null))
-                                    button.Enabled = false;
+                                if (button != null)
+                                    button.Enabled = __instance.SelectedInventoryItem != null;
                             }
                         }
                     }
