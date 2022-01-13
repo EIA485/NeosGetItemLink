@@ -60,6 +60,17 @@ namespace GetItemLink
                     Slot buttonRoot = (typeof(InventoryBrowser).GetField("_buttonsRoot", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance) as SyncRef<Slot>).Target[0];
                     if (buttonRoot != null)
                     {
+                        bool buttonState = __instance.SelectedInventoryItem != null;
+                        if (buttonState)
+                        {
+                            RecordDirectory directory = Traverse.Create(__instance.SelectedInventoryItem).Field("Directory")
+                                .GetValue<RecordDirectory>();
+                            buttonState = directory == null;
+                            if (!buttonState)
+                            {
+                                buttonState = (directory.LinkRecord != null);
+                            }
+                        }
                         for (int i = 0; i < buttonRoot.ChildrenCount; i++)
                         {
                             if (buttonRoot[i].Name == "AssetURI" | buttonRoot[i].Name == "URL")
@@ -68,17 +79,7 @@ namespace GetItemLink
                                 Button button = buttonRoot[i].GetComponent<Button>();
                                 if (button != null)
                                 {
-                                    button.Enabled = __instance.SelectedInventoryItem != null;
-                                    if (__instance.SelectedInventoryItem == null)
-                                    {
-                                        button.Enabled = false;
-                                    }
-                                    else
-                                    {
-                                        RecordDirectory directory = Traverse.Create(__instance.SelectedInventoryItem).Field("Directory")
-                                            .GetValue<RecordDirectory>();
-                                        button.Enabled = directory == null;
-                                    }
+                                    button.Enabled = buttonState;
                                 }
                                     
                             }
