@@ -1,10 +1,10 @@
-﻿using HarmonyLib;
-using NeosModLoader;
+﻿using System;
+using System.Reflection;
+using BaseX;
 using FrooxEngine;
 using FrooxEngine.UIX;
-using BaseX;
-using System.Reflection;
-using System;
+using HarmonyLib;
+using NeosModLoader;
 
 namespace GetItemLink
 {
@@ -149,7 +149,7 @@ namespace GetItemLink
 
                 if (link != null)
                 {
-                    System.Windows.Forms.Clipboard.SetText(link);
+					TextCopy.ClipboardService.SetText(link);
                     button.Slot[0].GetComponent<Image>().Tint.Value = color.White;
                 }
                 else
