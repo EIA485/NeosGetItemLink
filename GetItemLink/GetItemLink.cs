@@ -23,104 +23,75 @@ namespace GetItemLink
         [HarmonyPatch(typeof(InventoryBrowser))]
         class GetItemLinkPatch
         {
+            [HarmonyPrefix]
+            [HarmonyPatch("OnItemSelected")]
+            public static void OnItemSelectedPrefix(ref InventoryBrowser.SpecialItemType __state, Sync<InventoryBrowser.SpecialItemType> ____lastSpecialItemType)
+            {
+                __state = ____lastSpecialItemType.Value;
+            }
             [HarmonyPostfix]
             [HarmonyPatch("OnItemSelected")]
-            public static void OnItemSelectedPostFix(InventoryBrowser __instance)
+            public static void OnItemSelectedPostfix(
+                InventoryBrowser __instance,
+                BrowserItem currentItem,
+                InventoryBrowser.SpecialItemType __state,
+                SyncRef<Slot> ____buttonsRoot
+            )
             {
                 if (__instance.World == Userspace.UserspaceWorld)
                 {
-                    Slot buttonRoot = (typeof(InventoryBrowser).GetField("_buttonsRoot", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance) as SyncRef<Slot>).Target[0];
-                    AddButton((IButton button, ButtonEventData eventData) =>
+                    Slot buttonRoot = ____buttonsRoot.Target[0];
+                    if (__state != InventoryBrowser.ClassifyItem(currentItem as InventoryItemUI))
                     {
-                        ItemLink(button, __instance.SelectedInventoryItem, false);
-                    },
-                    "AssetURI",
-                    color.Purple,
-                    NeosAssets.Graphics.Badges.Cheese,
-                    buttonRoot);
+                        AddButton((IButton button, ButtonEventData eventData) =>
+                        {
+                            ItemLink(button, __instance.SelectedInventoryItem, false);
+                        },
+                        color.Purple,
+                        NeosAssets.Graphics.Badges.Cheese,
+                        buttonRoot);
 
-                    AddButton((IButton button, ButtonEventData eventData) =>
-                    {
-                        ItemLink(button, __instance.SelectedInventoryItem, true);
-                    },
-                    "URL",
-                    color.Brown,
-                    NeosAssets.Graphics.Badges.potato,
-                    buttonRoot);
-
+                        AddButton((IButton button, ButtonEventData eventData) =>
+                        {
+                            ItemLink(button, __instance.SelectedInventoryItem, true);
+                        },
+                        color.Brown,
+                        NeosAssets.Graphics.Badges.potato,
+                        buttonRoot);
+                    }
                 }
             }
 
             [HarmonyPrefix]
             [HarmonyPatch("OnChanges")]
-            public static void OnChangesPreFix(InventoryBrowser __instance)
+            public static void OnChangesPrefix(InventoryBrowser __instance, SyncRef<Slot> ____buttonsRoot)
             {
                 if (__instance.World == Userspace.UserspaceWorld)
                 {
-                    Slot buttonRoot = (typeof(InventoryBrowser).GetField("_buttonsRoot", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(__instance) as SyncRef<Slot>).Target[0];
-                    if (buttonRoot != null)
+                    Slot buttonRoot = ____buttonsRoot.Target[0];
+                    bool enableButtons = __instance.SelectedInventoryItem != null;
+                    foreach (var child in buttonRoot.Children)
                     {
-                        bool buttonState = __instance.SelectedInventoryItem != null;
-                        if (buttonState)
+                        if (child.Tag == "GetItemLinkButton")
                         {
-                            RecordDirectory directory = Traverse.Create(__instance.SelectedInventoryItem).Field("Directory")
-                                .GetValue<RecordDirectory>();
-                            buttonState = directory == null;
-                            if (!buttonState)
-                            {
-                                buttonState = (directory.LinkRecord != null);
-                                if (!buttonState)
-                                    buttonState = directory.DirectoryRecord.IsPublic;
-                            }
-                        }
-                        for (int i = 0; i < buttonRoot.ChildrenCount; i++)
-                        {
-                            if (buttonRoot[i].Name == "AssetURI" | buttonRoot[i].Name == "URL")
-                            {
-                                
-                                Button button = buttonRoot[i].GetComponent<Button>();
-                                if (button != null)
-                                {
-                                    button.Enabled = buttonState;
-                                }
-                                    
-                            }
+                            child.GetComponent<Button>().Enabled = enableButtons;
+                            child[0].GetComponent<Image>().Tint.Value = color.Black;
                         }
                     }
-
                 }
             }
-
-        }
-        public static Slot findButtonSlot(Slot slot, String name)
-        {
-            for (int i = 0; i < slot.ChildrenCount; i++)
-            {
-                if (slot[i].Name == name)
-                {
-                    return slot[i];
-                }
-            }
-            return null;
         }
 
-        public static void AddButton(ButtonEventHandler onPress, string name, color tint, Uri sprite, Slot buttonRoot)
+        public static void AddButton(ButtonEventHandler onPress, color tint, Uri sprite, Slot buttonRoot)
         {
-            Slot foundButtonSlot = findButtonSlot(buttonRoot, name);
-            if (foundButtonSlot != null)
-            {
-                Image buttonImage = foundButtonSlot[0].GetComponent<Image>();
-                if (buttonImage != null)
-                    buttonImage.Tint.Value = color.Black;
-                return;
-            }
-            Slot buttonSlot = buttonRoot.AddSlot(name);
-            buttonSlot.AttachComponent<LayoutElement>().PreferredWidth.Value = 57.6f;
+            Slot buttonSlot = buttonRoot.AddSlot("Button");
+            buttonSlot.Tag = "GetItemLinkButton";
+            buttonSlot.AttachComponent<LayoutElement>().PreferredWidth.Value = 96 * .6f;
             Button userButton = buttonSlot.AttachComponent<Button>();
             Image frontimage = buttonSlot.AttachComponent<Image>(true, null);
             frontimage.Tint.Value = tint;
             userButton.SetupBackgroundColor(frontimage.Tint);
-            Slot imageSlot = buttonSlot.AddSlot("image");
+            Slot imageSlot = buttonSlot.AddSlot("Image");
             Image image = imageSlot.AttachComponent<Image>();
             image.Sprite.Target = imageSlot.AttachSprite(sprite);
             image.Tint.Value = color.Black;
@@ -149,7 +120,7 @@ namespace GetItemLink
 
                 if (link != null)
                 {
-                    System.Windows.Forms.Clipboard.SetText(link);
+                    Engine.Current.InputInterface.Clipboard.SetText(link);
                     button.Slot[0].GetComponent<Image>().Tint.Value = color.White;
                 }
                 else
