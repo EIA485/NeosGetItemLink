@@ -20,6 +20,9 @@ namespace GetItemLink
             harmony.PatchAll();
         }
 
+        static FieldInfo itemInfo = typeof(InventoryItemUI).GetField("Item", BindingFlags.Instance | BindingFlags.NonPublic);
+        static FieldInfo directoryInfo = typeof(InventoryItemUI).GetField("Directory", BindingFlags.Instance | BindingFlags.NonPublic);
+
         [HarmonyPatch(typeof(InventoryBrowser))]
         class GetItemLinkPatch
         {
@@ -96,31 +99,18 @@ namespace GetItemLink
 
         public static void ItemLink(IButton button, InventoryItemUI Item, bool type)
         {
-            string link;
-            Record record = (typeof(InventoryItemUI).GetField("Item", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Item) as Record);
-            if (record == null)
-            {
-                RecordDirectory Directory = (typeof(InventoryItemUI).GetField("Directory", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(Item) as RecordDirectory);
-                if (Directory != null)
-                    record = Directory.LinkRecord;
-                if (record == null)
-                    record = Directory.DirectoryRecord;
-            }
+            Record record = (Record)itemInfo.GetValue(Item) ?? ((RecordDirectory)directoryInfo.GetValue(Item)).EntryRecord;
             if (record != null)
             {
-                if (type)
-                    link = (record.URL.ToString());
-                else
-                    link = (record.AssetURI);
-
+                string link = type ? record.URL.ToString() : record.AssetURI;
                 if (link != null)
                 {
                     Engine.Current.InputInterface.Clipboard.SetText(link);
                     button.Slot[0].GetComponent<Image>().Tint.Value = color.White;
+                    return;
                 }
-                else
-                    button.Slot[0].GetComponent<Image>().Tint.Value = color.Red;
             }
+            button.Slot[0].GetComponent<Image>().Tint.Value = color.Red;
         }
     }
 }
