@@ -31,12 +31,7 @@ namespace GetItemLink
             }
             [HarmonyPostfix]
             [HarmonyPatch("OnItemSelected")]
-            public static void OnItemSelectedPostfix(
-                InventoryBrowser __instance,
-                BrowserItem currentItem,
-                InventoryBrowser.SpecialItemType __state,
-                SyncRef<Slot> ____buttonsRoot
-            )
+            public static void OnItemSelectedPostfix(InventoryBrowser __instance, BrowserItem currentItem, InventoryBrowser.SpecialItemType __state, SyncRef<Slot> ____buttonsRoot)
             {
                 if (__instance.World == Userspace.UserspaceWorld)
                 {
