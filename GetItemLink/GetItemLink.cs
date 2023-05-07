@@ -59,6 +59,17 @@ namespace GetItemLink
                         color.Brown,
                         NeosAssets.Graphics.Badges.potato,
                         buttonRoot);
+                        AddButton((IButton button, ButtonEventData eventData) =>
+                        {
+                            var editForm = __instance.Slot.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
+                            Record r = GetRecord(__instance.SelectedInventoryItem);
+                            if (r == null) return;
+                            AccessTools.Method(editForm.GetType(), "Setup").Invoke(editForm, new object[] { null, r});
+                        },
+                        "EditRecord",
+                        color.Orange,
+                        NeosAssets.Graphics.Icons.Dash.Settings,
+                        buttonRoot);
                     }
                 }
             }
@@ -81,6 +92,11 @@ namespace GetItemLink
                         else if (child.Tag == "URL")
                         {
                             child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, true) != null);
+                            child[0].GetComponent<Image>().Tint.Value = color.Black;
+                        }
+                        else if (child.Tag == "EditRecord")
+                        {
+                            child.GetComponent<Button>().Enabled = enableButtons && GetRecord(__instance.SelectedInventoryItem) != null;
                             child[0].GetComponent<Image>().Tint.Value = color.Black;
                         }
                     }
@@ -132,9 +148,14 @@ namespace GetItemLink
             }
         }
 
-        static string GetLink(InventoryItemUI Item, bool type)
+        static Record GetRecord(InventoryItemUI item)
         {
-            Record record = (Record)itemInfo.GetValue(Item) ?? ((RecordDirectory)directoryInfo.GetValue(Item)).EntryRecord;
+            return (Record)itemInfo.GetValue(item) ?? ((RecordDirectory)directoryInfo.GetValue(item)).EntryRecord;
+        }
+
+        static string GetLink(InventoryItemUI item, bool type)
+        {
+            Record record = GetRecord(item);
             return type ? record?.URL.ToString() : record?.AssetURI;
         }
     }
