@@ -12,7 +12,7 @@ namespace GetItemLink
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
-        public override string Version => "1.4.0";
+        public override string Version => "1.4.1";
         public override string Link => "https://github.com/eia485/NeosGetItemLink/";
         public override void OnEngineInit()
         {
@@ -62,7 +62,8 @@ namespace GetItemLink
                         AddButton((IButton button, ButtonEventData eventData) =>
                         {
                             RecordEditForm editForm;
-                            if (__instance.Slot.GetComponentInParents<ModalOverlayManager>() == null)
+                            var overlayMngr = __instance.Slot.GetComponentInParents<ModalOverlayManager>();
+                            if (overlayMngr == null)
                             {
                                 var slot = __instance.LocalUserSpace.AddSlot("Record Edit Form");
                                 slot.PositionInFrontOfUser(float3.Backward, float3.Right * 0.5f);
@@ -71,7 +72,7 @@ namespace GetItemLink
                             }
                             else
                             {
-                                editForm = __instance.Slot.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
+                                editForm = overlayMngr.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
                             }
                             Record r = GetRecord(__instance.SelectedInventoryItem);
                             if (r == null) return;
