@@ -6,6 +6,8 @@ the potato button gives you the record link
 
 the cheese button gives you the asset uri
 
+the cog button shows a record metadata editor
+
 ## Installation
 1. Install [NeosModLoader](https://github.com/zkxs/NeosModLoader).
 1. Place [GetItemLink.dll](https://github.com/eia485/NeosGetItemLink/releases/latest/download/GetItemLink.dll) into your `nml_mods` folder. This folder should be at `C:\Program Files (x86)\Steam\steamapps\common\NeosVR\nml_mods` for a default install. You can create it if it's missing, or if you launch the game once with NeosModLoader installed it will create the folder for you.
