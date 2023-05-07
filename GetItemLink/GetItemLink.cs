@@ -61,10 +61,21 @@ namespace GetItemLink
                         buttonRoot);
                         AddButton((IButton button, ButtonEventData eventData) =>
                         {
-                            var editForm = __instance.Slot.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
+                            RecordEditForm editForm;
+                            if (__instance.Slot.GetComponentInParents<ModalOverlayManager>() == null)
+                            {
+                                var slot = __instance.LocalUserSpace.AddSlot("Record Edit Form");
+                                slot.PositionInFrontOfUser(float3.Backward, float3.Right * 0.5f);
+                                NeosCanvasPanel panel;
+                                editForm = RecordEditForm.OpenDialogWindow(slot, out panel);
+                            }
+                            else
+                            {
+                                editForm = __instance.Slot.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
+                            }
                             Record r = GetRecord(__instance.SelectedInventoryItem);
                             if (r == null) return;
-                            AccessTools.Method(editForm.GetType(), "Setup").Invoke(editForm, new object[] { null, r});
+                            AccessTools.Method(typeof(RecordEditForm), "Setup").Invoke(editForm, new object[] { null, r});
                         },
                         "EditRecord",
                         color.Orange,
