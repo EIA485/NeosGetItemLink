@@ -14,6 +14,7 @@
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
     <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
     <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
+    <NeosPath Condition="Exists('E:\Programs\Steam\steamapps\common\NeosVR\')">E:\Programs\Steam\steamapps\common\NeosVR\</NeosPath>
     <NeosPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/NeosVR/')">$(HOME)/.steam/steam/steamapps/common/NeosVR/</NeosPath>
     <GameRefsPath>$(NeosPath)Neos_Data\Managed\</GameRefsPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
