@@ -12,10 +12,6 @@
     <Deterministic>true</Deterministic>
     <CopyLocal>false</CopyLocal>
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
-    <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
-    <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
-    <NeosPath Condition="Exists('E:\Programs\Steam\steamapps\common\NeosVR\')">E:\Programs\Steam\steamapps\common\NeosVR\</NeosPath>
-    <NeosPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/NeosVR/')">$(HOME)/.steam/steam/steamapps/common/NeosVR/</NeosPath>
     <GameRefsPath>$(NeosPath)Neos_Data\Managed\</GameRefsPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -23,24 +19,38 @@
     <DebugType Condition="'$(Configuration)'=='Release'">None</DebugType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="TextCopy" Version="5.0.2" />
-    <Reference Include="NeosModLoader">
-      <HintPath>$(NeosPath)Libraries\NeosModLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="HarmonyLib">
-      <HintPath>$(NeosPath)nml_libs\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(GameRefsPath)Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="FrooxEngine">
-      <HintPath>$(GameRefsPath)FrooxEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="BaseX">
-      <HintPath>$(GameRefsPath)BaseX.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<PropertyGroup Condition="'$(ResonitePath)'==''">
+		<!-- linux steam -->
+		<ResonitePath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Resonite/')">$(HOME)/.steam/steam/steamapps/common/Resonite/</ResonitePath>
+		<!-- windows steam -->
+		<ResonitePath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite\')">C:\Program Files (x86)\Steam\steamapps\common\Resonite\</ResonitePath>
+		<!-- windows standalone -->
+		<ResonitePath Condition="Exists('C:\Resonite\app\')">C:\Resonite\app\</ResonitePath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="0Harmony">
+			<HintPath>$(ResonitePath)Libraries\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="ResoniteModLoader">
+			<HintPath>$(ResonitePath)Libraries\ResoniteModLoader.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Assets">
+			<HintPath>$(ResonitePath)Resonite_Data\Managed\Elements.Assets.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Core">
+			<HintPath>$(ResonitePath)Resonite_Data\Managed\Elements.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Skyfrost.Base">
+			<HintPath>$(ResonitePath)Resonite_Data\Managed\Skyfrost.Base.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine">
+			<HintPath>$(ResonitePath)Resonite_Data\Managed\FrooxEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="System.ValueTuple">
+		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Resonite\Resonite_Data\Managed\System.ValueTuple.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 
   <!-- make all references non-private, so they won't be copied to the output folder -->
