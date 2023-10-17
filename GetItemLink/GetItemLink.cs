@@ -1,19 +1,19 @@
 ﻿using HarmonyLib;
-using NeosModLoader;
+using ResoniteModLoader;
 using FrooxEngine;
 using FrooxEngine.UIX;
-using BaseX;
+using Elements.Core;
 using System.Reflection;
 using System;
 
 namespace GetItemLink
 {
-    public class GetItemLink : NeosMod
+    public class GetItemLink : ResoniteMod
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
         public override string Version => "1.4.1";
-        public override string Link => "https://github.com/eia485/NeosGetItemLink/";
+        public override string Link => "https://github.com/eia485/ResoniteGetItemLink/";
         public override void OnEngineInit()
         {
             Harmony harmony = new Harmony("net.eia485.GetItemLink");
@@ -47,8 +47,8 @@ namespace GetItemLink
                             ItemLink(button, __instance.SelectedInventoryItem, false);
                         },
                         "AssetURI",
-                        color.Purple,
-                        NeosAssets.Graphics.Badges.Cheese,
+                        colorX.Purple,
+                        OfficialAssets.Graphics.Badges.Cheese,
                         buttonRoot);
 
                         AddButton((IButton button, ButtonEventData eventData) =>
@@ -56,8 +56,8 @@ namespace GetItemLink
                             ItemLink(button, __instance.SelectedInventoryItem, true);
                         },
                         "URL",
-                        color.Brown,
-                        NeosAssets.Graphics.Badges.potato,
+                        colorX.Brown,
+                        OfficialAssets.Graphics.Badges.potato,
                         buttonRoot);
                         AddButton((IButton button, ButtonEventData eventData) =>
                         {
@@ -67,20 +67,19 @@ namespace GetItemLink
                             {
                                 var slot = __instance.LocalUserSpace.AddSlot("Record Edit Form");
                                 slot.PositionInFrontOfUser(float3.Backward, float3.Right * 0.5f);
-                                NeosCanvasPanel panel;
-                                editForm = RecordEditForm.OpenDialogWindow(slot, out panel);
+                                editForm = RecordEditForm.OpenDialogWindow(slot);
                             }
                             else
                             {
-                                editForm = overlayMngr.OpenModalOverlay(new float2(.25f, .8f)).Slot.AttachComponent<RecordEditForm>();
+                                editForm = overlayMngr.OpenModalOverlay(new float2(.25f, .8f), "Edit Record").Slot.AttachComponent<RecordEditForm>();
                             }
                             Record r = GetRecord(__instance.SelectedInventoryItem);
                             if (r == null) return;
                             AccessTools.Method(typeof(RecordEditForm), "Setup").Invoke(editForm, new object[] { null, r});
                         },
                         "EditRecord",
-                        color.Orange,
-                        NeosAssets.Graphics.Icons.Dash.Settings,
+                        colorX.Orange,
+                        OfficialAssets.Graphics.Icons.Dash.Settings,
                         buttonRoot);
                     }
                 }
@@ -99,17 +98,17 @@ namespace GetItemLink
                         if (child.Tag == "AssetURI")
                         {
                             child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, false) != null);
-                            child[0].GetComponent<Image>().Tint.Value = color.Black;
+                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
                         }
                         else if (child.Tag == "URL")
                         {
                             child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, true) != null);
-                            child[0].GetComponent<Image>().Tint.Value = color.Black;
+                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
                         }
                         else if (child.Tag == "EditRecord")
                         {
                             child.GetComponent<Button>().Enabled = enableButtons && GetRecord(__instance.SelectedInventoryItem) != null;
-                            child[0].GetComponent<Image>().Tint.Value = color.Black;
+                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
                         }
                     }
                 }
@@ -126,7 +125,7 @@ namespace GetItemLink
             }
         }
 
-        public static void AddButton(ButtonEventHandler onPress, string tag, color tint, Uri sprite, Slot buttonRoot)
+        public static void AddButton(ButtonEventHandler onPress, string tag, colorX tint, Uri sprite, Slot buttonRoot)
         {
             Slot buttonSlot = buttonRoot.AddSlot("Button");
             buttonSlot.Tag = tag;
@@ -138,7 +137,7 @@ namespace GetItemLink
             Slot imageSlot = buttonSlot.AddSlot("Image");
             Image image = imageSlot.AttachComponent<Image>();
             image.Sprite.Target = imageSlot.AttachSprite(sprite);
-            image.Tint.Value = color.Black;
+            image.Tint.Value = colorX.Black;
             image.RectTransform.AddFixedPadding(2f);
             userButton.LocalPressed += onPress;
 
@@ -152,11 +151,11 @@ namespace GetItemLink
             if (link != null)
             {
                 Engine.Current.InputInterface.Clipboard.SetText(link);
-                button.Slot[0].GetComponent<Image>().Tint.Value = color.White;
+                button.Slot[0].GetComponent<Image>().Tint.Value = colorX.White;
             }
             else
             {
-                button.Slot[0].GetComponent<Image>().Tint.Value = color.Red;
+                button.Slot[0].GetComponent<Image>().Tint.Value = colorX.Red;
             }
         }
 
@@ -168,7 +167,7 @@ namespace GetItemLink
         static string GetLink(InventoryItemUI item, bool type)
         {
             Record record = GetRecord(item);
-            return type ? record?.URL.ToString() : record?.AssetURI;
+            return type ? record?.GetUrl(Engine.Current.PlatformProfile).ToString() : record?.AssetURI;
         }
     }
 }

@@ -12,11 +12,11 @@
     <Deterministic>true</Deterministic>
     <CopyLocal>false</CopyLocal>
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
-    <NeosPath>$(MSBuildThisFileDirectory)NeosVR</NeosPath>
-    <NeosPath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\NeosVR\')">C:\Program Files (x86)\Steam\steamapps\common\NeosVR\</NeosPath>
-    <NeosPath Condition="Exists('E:\Programs\Steam\steamapps\common\NeosVR\')">E:\Programs\Steam\steamapps\common\NeosVR\</NeosPath>
-    <NeosPath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/NeosVR/')">$(HOME)/.steam/steam/steamapps/common/NeosVR/</NeosPath>
-    <GameRefsPath>$(NeosPath)Neos_Data\Managed\</GameRefsPath>
+    <GamePath>$(MSBuildThisFileDirectory)Resonite</GamePath>
+    <GamePath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite\')">C:\Program Files (x86)\Steam\steamapps\common\Resonite\</GamePath>
+    <GamePath Condition="Exists('E:\Programs\Steam\steamapps\common\Resonite\')">E:\Programs\Steam\steamapps\common\Resonite\</GamePath>
+    <GamePath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Resonite/')">$(HOME)/.steam/steam/steamapps/common/Resonite/</GamePath>
+    <GameRefsPath>$(GamePath)Resonite_Data\Managed\</GameRefsPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <DebugSymbols Condition="'$(Configuration)'=='Release'">false</DebugSymbols>
@@ -24,12 +24,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TextCopy" Version="5.0.2" />
-    <Reference Include="NeosModLoader">
-      <HintPath>$(NeosPath)Libraries\NeosModLoader.dll</HintPath>
+    <Reference Include="ResoniteModLoader">
+      <HintPath>$(GamePath)Libraries\ResoniteModLoader.dll</HintPath>
     </Reference>
     <Reference Include="HarmonyLib">
-      <HintPath>$(NeosPath)nml_libs\0Harmony.dll</HintPath>
+      <HintPath>$(GamePath)0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyFrost.Base">
+      <HintPath>$(GameRefsPath)SkyFrost.Base.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GameRefsPath)Assembly-CSharp.dll</HintPath>
@@ -37,8 +39,8 @@
     <Reference Include="FrooxEngine">
       <HintPath>$(GameRefsPath)FrooxEngine.dll</HintPath>
     </Reference>
-    <Reference Include="BaseX">
-      <HintPath>$(GameRefsPath)BaseX.dll</HintPath>
+    <Reference Include="Elements.Core">
+      <HintPath>$(GameRefsPath)Elements.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -51,6 +53,6 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToMods)'=='true'">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(NeosPath)nml_mods" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)rml_mods" />
   </Target>
 </Project>
