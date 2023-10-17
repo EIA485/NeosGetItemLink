@@ -12,7 +12,7 @@
     <Deterministic>true</Deterministic>
     <CopyLocal>false</CopyLocal>
     <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
-    <GameRefsPath>$(NeosPath)Neos_Data\Managed\</GameRefsPath>
+    <GameRefsPath>$(ResonitePath)Resonite_Data\Managed\</GameRefsPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <DebugSymbols Condition="'$(Configuration)'=='Release'">false</DebugSymbols>
@@ -48,7 +48,7 @@
 			<HintPath>$(ResonitePath)Resonite_Data\Managed\FrooxEngine.dll</HintPath>
 		</Reference>
 		<Reference Include="System.ValueTuple">
-		  <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Resonite\Resonite_Data\Managed\System.ValueTuple.dll</HintPath>
+		  <HintPath>$(ResonitePath)Resonite_Data\Managed\System.ValueTuple.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
@@ -61,6 +61,6 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToMods)'=='true'">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(NeosPath)nml_mods" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ResonitePath)rml_mods" />
   </Target>
 </Project>
