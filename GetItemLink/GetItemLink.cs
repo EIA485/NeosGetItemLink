@@ -24,6 +24,11 @@ namespace GetItemLink
         static FieldInfo directoryInfo = typeof(InventoryItemUI).GetField("Directory", BindingFlags.Instance | BindingFlags.NonPublic);
         const InventoryBrowser.SpecialItemType UniqueSIT = (InventoryBrowser.SpecialItemType)(-1);// doing this so the buttons show up on component init
 
+        const string ButtonsRootName = "GetItemLink Buttons";
+        const string GetAssetTag = "Get Asset URI";
+        const string GetRecordTag = "Get Record URI";
+        const string EditRecordTag = "Edit Record";
+
         [HarmonyPatch(typeof(InventoryBrowser))]
         class GetItemLinkPatch
         {
@@ -42,45 +47,52 @@ namespace GetItemLink
                     if (__state != InventoryBrowser.ClassifyItem(currentItem as InventoryItemUI) || __state == UniqueSIT)
                     {
                         Slot buttonRoot = ____buttonsRoot.Target[0];
-                        AddButton((IButton button, ButtonEventData eventData) =>
+                        UIBuilder ui = new(buttonRoot);
+                        RadiantUI_Constants.SetupDefaultStyle(ui);
+                        var hori = ui.HorizontalLayout(4);
+                        hori.Slot.Name = ButtonsRootName;
+                        
+                        // Weird workaround to force UIX reflow, otherwise buttons are invisible
+                        hori.PaddingLeft.Value = 1;
+                        __instance.RunInUpdates(0, () =>
                         {
-                            ItemLink(button, __instance.SelectedInventoryItem, false);
-                        },
-                        "AssetURI",
-                        colorX.Purple,
-                        OfficialAssets.Graphics.Badges.Cheese,
-                        buttonRoot);
+                            hori.PaddingLeft.Value = 0;
+                        });
 
-                        AddButton((IButton button, ButtonEventData eventData) =>
-                        {
-                            ItemLink(button, __instance.SelectedInventoryItem, true);
-                        },
-                        "URL",
-                        colorX.Brown,
-                        OfficialAssets.Graphics.Badges.potato,
-                        buttonRoot);
-                        AddButton((IButton button, ButtonEventData eventData) =>
-                        {
-                            RecordEditForm editForm;
-                            var overlayMngr = __instance.Slot.GetComponentInParents<ModalOverlayManager>();
-                            if (overlayMngr == null)
+                        AddButton(
+                            (IButton button, ButtonEventData eventData) => ItemLink(button, __instance.SelectedInventoryItem, false),
+                            GetAssetTag, RadiantUI_Constants.Hero.PURPLE, OfficialAssets.Graphics.Badges.Cheese,
+                            ui
+                        );
+
+                        AddButton(
+                            (IButton button, ButtonEventData eventData) => ItemLink(button, __instance.SelectedInventoryItem, true),
+                            GetRecordTag, RadiantUI_Constants.Hero.RED, OfficialAssets.Graphics.Badges.potato,
+                            ui
+                        );
+
+                        AddButton(
+                            (IButton button, ButtonEventData eventData) =>
                             {
-                                var slot = __instance.LocalUserSpace.AddSlot("Record Edit Form");
-                                slot.PositionInFrontOfUser(float3.Backward, float3.Right * 0.5f);
-                                editForm = RecordEditForm.OpenDialogWindow(slot);
-                            }
-                            else
-                            {
-                                editForm = overlayMngr.OpenModalOverlay(new float2(.25f, .8f), "Edit Record").Slot.AttachComponent<RecordEditForm>();
-                            }
-                            Record r = GetRecord(__instance.SelectedInventoryItem);
-                            if (r == null) return;
-                            AccessTools.Method(typeof(RecordEditForm), "Setup").Invoke(editForm, new object[] { null, r});
-                        },
-                        "EditRecord",
-                        colorX.Orange,
-                        OfficialAssets.Graphics.Icons.Dash.Settings,
-                        buttonRoot);
+                                RecordEditForm editForm;
+                                var overlayMngr = __instance.Slot.GetComponentInParents<ModalOverlayManager>();
+                                if (overlayMngr == null)
+                                {
+                                    var slot = __instance.LocalUserSpace.AddSlot("Record Edit Form");
+                                    slot.PositionInFrontOfUser(float3.Backward, float3.Right * 0.5f);
+                                    editForm = RecordEditForm.OpenDialogWindow(slot);
+                                }
+                                else
+                                {
+                                    editForm = overlayMngr.OpenModalOverlay(new float2(.25f, .8f), "Edit Record").Slot.AttachComponent<RecordEditForm>();
+                                }
+                                Record r = GetRecord(__instance.SelectedInventoryItem);
+                                if (r == null) return;
+                                AccessTools.Method(typeof(RecordEditForm), "Setup").Invoke(editForm, new object[] { null, r });
+                            },
+                            EditRecordTag, RadiantUI_Constants.Hero.ORANGE, OfficialAssets.Graphics.Icons.Dash.Settings,
+                            ui
+                        );
                     }
                 }
             }
@@ -93,22 +105,26 @@ namespace GetItemLink
                 {
                     Slot buttonRoot = ____buttonsRoot.Target[0];
                     bool enableButtons = __instance.SelectedInventoryItem != null;
-                    foreach (var child in buttonRoot.Children)
+                    Slot buttons = buttonRoot.FindChild(ButtonsRootName);
+                    if (buttons != null)
                     {
-                        if (child.Tag == "AssetURI")
+                        foreach (var child in buttons.Children)
                         {
-                            child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, false) != null);
-                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
-                        }
-                        else if (child.Tag == "URL")
-                        {
-                            child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, true) != null);
-                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
-                        }
-                        else if (child.Tag == "EditRecord")
-                        {
-                            child.GetComponent<Button>().Enabled = enableButtons && GetRecord(__instance.SelectedInventoryItem) != null;
-                            child[0].GetComponent<Image>().Tint.Value = colorX.Black;
+                            if (child.Tag == GetAssetTag)
+                            {
+                                child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, false) != null);
+                                child[0].GetComponent<Image>().Tint.Value = colorX.Black;
+                            }
+                            else if (child.Tag == GetRecordTag)
+                            {
+                                child.GetComponent<Button>().Enabled = enableButtons && (GetLink(__instance.SelectedInventoryItem, true) != null);
+                                child[0].GetComponent<Image>().Tint.Value = colorX.Black;
+                            }
+                            else if (child.Tag == EditRecordTag)
+                            {
+                                child.GetComponent<Button>().Enabled = enableButtons && GetRecord(__instance.SelectedInventoryItem) != null;
+                                child[0].GetComponent<Image>().Tint.Value = colorX.Black;
+                            }
                         }
                     }
                 }
@@ -125,21 +141,14 @@ namespace GetItemLink
             }
         }
 
-        public static void AddButton(ButtonEventHandler onPress, string tag, colorX tint, Uri sprite, Slot buttonRoot)
+        public static void AddButton(ButtonEventHandler onPress, string tag, colorX tint, Uri sprite, UIBuilder ui)
         {
-            Slot buttonSlot = buttonRoot.AddSlot("Button");
+            var userButton = ui.Button(sprite, tint);
+            var buttonSlot = userButton.Slot;
             buttonSlot.Tag = tag;
-            buttonSlot.AttachComponent<LayoutElement>().PreferredWidth.Value = 96 * .6f;
-            Button userButton = buttonSlot.AttachComponent<Button>();
-            Image frontimage = buttonSlot.AttachComponent<Image>(true, null);
-            frontimage.Tint.Value = tint;
-            userButton.SetupBackgroundColor(frontimage.Tint);
-            Slot imageSlot = buttonSlot.AddSlot("Image");
-            Image image = imageSlot.AttachComponent<Image>();
-            image.Sprite.Target = imageSlot.AttachSprite(sprite);
-            image.Tint.Value = colorX.Black;
-            image.RectTransform.AddFixedPadding(2f);
             userButton.LocalPressed += onPress;
+            userButton.ColorDrivers.RemoveAt(userButton.ColorDrivers.Count - 1);
+            buttonSlot[0].GetComponent<Image>().Tint.Value = colorX.Black;
 
             // https://github.com/Psychpsyo/Tooltippery Support, implemented based on the readme
             buttonSlot.AttachComponent<Comment>().Text.Value = "TooltipperyLabel:" + tag;
