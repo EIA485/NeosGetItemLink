@@ -12,7 +12,7 @@ namespace GetItemLink
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
-        public override string Version => "1.4.1";
+        public override string Version => "1.4.2";
         public override string Link => "https://github.com/eia485/ResoniteGetItemLink/";
         public override void OnEngineInit()
         {
