@@ -12,7 +12,7 @@ namespace GetItemLink
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
-        public override string Version => "1.4.2";
+        public override string Version => "1.4.3";
         public override string Link => "https://github.com/eia485/NeosGetItemLink/";
         public override void OnEngineInit()
         {
@@ -61,13 +61,13 @@ namespace GetItemLink
 
                         AddButton(
                             (IButton button, ButtonEventData eventData) => ItemLink(button, __instance.SelectedInventoryItem, false),
-                            GetAssetTag, RadiantUI_Constants.Hero.PURPLE, OfficialAssets.Graphics.Badges.Cheese,
+                            GetAssetTag, colorX.Purple, OfficialAssets.Graphics.Badges.Cheese,
                             ui
                         );
 
                         AddButton(
                             (IButton button, ButtonEventData eventData) => ItemLink(button, __instance.SelectedInventoryItem, true),
-                            GetRecordTag, RadiantUI_Constants.Hero.RED, OfficialAssets.Graphics.Badges.potato,
+                            GetRecordTag, colorX.Brown, OfficialAssets.Graphics.Badges.potato,
                             ui
                         );
 
@@ -90,7 +90,7 @@ namespace GetItemLink
                                 if (r == null) return;
                                 AccessTools.Method(typeof(RecordEditForm), "Setup").Invoke(editForm, new object[] { null, r });
                             },
-                            EditRecordTag, RadiantUI_Constants.Hero.ORANGE, OfficialAssets.Graphics.Icons.Dash.Settings,
+                            EditRecordTag, colorX.Orange, OfficialAssets.Graphics.Icons.Dash.Settings,
                             ui
                         );
                     }
