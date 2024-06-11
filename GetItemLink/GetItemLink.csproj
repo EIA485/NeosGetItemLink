@@ -35,6 +35,9 @@
     <Reference Include="SkyFrost.Base">
       <HintPath>$(GameRefsPath)SkyFrost.Base.dll</HintPath>
     </Reference>
+	<Reference Include="Skyfrost.Base.Models">
+		<HintPath>$(GameRefsPath)Skyfrost.Base.Models.dll</HintPath>
+	</Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>$(GameRefsPath)Assembly-CSharp.dll</HintPath>
     </Reference>
