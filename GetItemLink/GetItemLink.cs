@@ -6,6 +6,7 @@ using FrooxEngine.UIX;
 using Elements.Core;
 using System.Reflection;
 using System;
+using Renderite.Shared;
 
 namespace GetItemLink
 {
@@ -13,7 +14,7 @@ namespace GetItemLink
     {
         public override string Name => "GetItemLink";
         public override string Author => "eia485";
-        public override string Version => "1.4.5";
+        public override string Version => "1.4.6";
         public override string Link => "https://github.com/eia485/NeosGetItemLink/";
         public override void OnEngineInit()
         {
