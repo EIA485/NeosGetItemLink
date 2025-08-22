@@ -1,69 +1,69 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GetItemLink</RootNamespace>
-    <AssemblyName>GetItemLink</AssemblyName>
-    <ProjectGuid>{0322B2EF-7452-479D-BAE2-FCAB75033337}</ProjectGuid>
-    <TargetFramework>net9.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <BaseOutputPath>..\bin</BaseOutputPath>
-    <BuildProjectReferences>false</BuildProjectReferences>
-    <Deterministic>true</Deterministic>
-    <CopyLocal>false</CopyLocal>
-    <CopyToMods Condition="'$(CopyToMods)'==''">true</CopyToMods>
-    <GamePath>$(MSBuildThisFileDirectory)Resonite</GamePath>
-    <GamePath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite\')">C:\Program Files (x86)\Steam\steamapps\common\Resonite\</GamePath>
-    <GamePath Condition="Exists('E:\Programs\Steam\steamapps\common\Resonite\')">E:\Programs\Steam\steamapps\common\Resonite\</GamePath>
-    <GamePath Condition="Exists('$(HOME)/.steam/steam/steamapps/common/Resonite/')">$(HOME)/.steam/steam/steamapps/common/Resonite/</GamePath>
-    <GameRefsPath>$(GamePath)Resonite_Data\Managed\</GameRefsPath>
-	<HarmonyPath>$(GamePath)0Harmony.dll</HarmonyPath>
-	<HarmonyPath Condition="Exists('$(GamePath)\rml_libs\0Harmony.dll')">$(GamePath)\rml_libs\0Harmony.dll</HarmonyPath>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <DebugSymbols Condition="'$(Configuration)'=='Release'">false</DebugSymbols>
-    <DebugType Condition="'$(Configuration)'=='Release'">None</DebugType>
-  </PropertyGroup>
+	<PropertyGroup>
+		<Version>1.4.8</Version>
+		<Authors>eia485</Authors>
+		<RepositortyUrl>"https://github.com/eia485/NeosGetItemLink/"</RepositortyUrl>
+		
+		<Product>$(AssemblyName)</Product>
+		<PackageID>net.$(Product).$(Authors)</PackageID>
+		
+		<RootNamespace>$(Product)</RootNamespace>
+		<AssemblyVersion>$(Version)</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
 
-  <ItemGroup>
-    <Reference Include="ResoniteModLoader">
-      <HintPath>$(GamePath)Libraries\ResoniteModLoader.dll</HintPath>
-    </Reference>
-    <Reference Include="HarmonyLib">
-      <HintPath>$(HarmonyPath)</HintPath>
-    </Reference>
-    <Reference Include="SkyFrost.Base">
-      <HintPath>$(GamePath)SkyFrost.Base.dll</HintPath>
-    </Reference>
-	<Reference Include="Skyfrost.Base.Models">
-		<HintPath>$(GamePath)Skyfrost.Base.Models.dll</HintPath>
-	</Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>$(GamePath)Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="FrooxEngine">
-      <HintPath>$(GamePath)FrooxEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="FrooxEngine.Store">
-	  <HintPath>$(GamePath)FrooxEngine.Store.dll</HintPath>
-    </Reference>
-    <Reference Include="Elements.Core">
-      <HintPath>$(GamePath)Elements.Core.dll</HintPath>
-    </Reference>
-	<Reference Include="Renderite.Shared">
-      <HintPath>$(GamePath)Renderite.Shared.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+		<RestoreAdditionalProjectSources>https://nuget-modding.resonite.net/v3/index.json</RestoreAdditionalProjectSources>
 
+		<TargetFramework>net9.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Deterministic>true</Deterministic>
 
-  <!-- make all references non-private, so they won't be copied to the output folder -->
-  <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveAssemblyReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" />
-    </ItemGroup>
-  </Target>
+		<GamePath>$(MSBuildThisFileDirectory)Resonite</GamePath>
+		<GamePath Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Resonite\')">C:\Program Files (x86)\Steam\steamapps\common\Resonite\</GamePath>
+		<GamePath Condition="Exists('$(HOME)\.steam\steam\steamapps\common\Resonite\')">$(HOME)/.steam/steam/steamapps/common/Resonite/</GamePath>
+		<GamePath Condition="Exists('E:\Programs\Steam\steamapps\common\Resonite\')">E:\Programs\Steam\steamapps\common\Resonite\</GamePath>
+		<GamePath Condition="Exists('E:\Games\Steam\steamapps\common\Resonite\')">E:\Games\Steam\steamapps\common\Resonite\</GamePath>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+	</ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(CopyToMods)'=='true'">
-    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)rml_mods" />
-  </Target>
+	<ItemGroup>
+		<Reference Include="0Harmony">
+			<HintPath>$(GamePath)BepInEx\core\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Core">
+			<HintPath>$(GamePath)BepInEx\core\BepInEx.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.NET.Common">
+			<HintPath>$(GamePath)BepInEx\core\BepInEx.NET.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Preloader.Core">
+			<HintPath>$(GamePath)BepInEx\core\BepInEx.Preloader.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInExResoniteShim">
+			<HintPath>$(GamePath)BepInEx\plugins\BepInExResoniteShim.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine">
+		    <HintPath>$(GamePath)FrooxEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="FrooxEngine.Store">
+			<HintPath>$(GamePath)FrooxEngine.Store.dll</HintPath>
+		</Reference>
+		<Reference Include="Elements.Core">
+			<HintPath>$(GamePath)Elements.Core.dll</HintPath>
+		</Reference>
+		<Reference Include="Renderite.Shared">
+			<HintPath>$(GamePath)Renderite.Shared.dll</HintPath>
+		</Reference>
+		<Reference Include="SkyFrost.Base.Models">
+			<HintPath>$(GamePath)SkyFrost.Base.Models.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(GamePath)BepInEx\plugins" />
+		<Message Text="Copied $(TargetFileName) to $(GamePath)BepInEx\plugins" Importance="high" />
+	</Target>
 </Project>

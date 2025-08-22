@@ -1,26 +1,21 @@
-﻿using HarmonyLib;
-using ResoniteModLoader;
+﻿using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.NET.Common;
+using BepInExResoniteShim;
+using Elements.Core;
 using FrooxEngine;
 using FrooxEngine.Store;
 using FrooxEngine.UIX;
-using Elements.Core;
+using HarmonyLib;
 using System.Reflection;
-using System;
-using Renderite.Shared;
 
 namespace GetItemLink
 {
-    public class GetItemLink : ResoniteMod
+    [BepInDependency("ResoniteModding.BepInExResoniteShim")]
+    [ResonitePlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION, MyPluginInfo.PLUGIN_AUTHORS, MyPluginInfo.PLUGIN_REPOSITORY_URL)]
+    public class GetItemLink : BasePlugin
     {
-        public override string Name => "GetItemLink";
-        public override string Author => "eia485";
-        public override string Version => "1.4.6";
-        public override string Link => "https://github.com/eia485/NeosGetItemLink/";
-        public override void OnEngineInit()
-        {
-            Harmony harmony = new Harmony("net.eia485.GetItemLink");
-            harmony.PatchAll();
-        }
+        public override void Load() => HarmonyInstance.PatchAll();
 
         static FieldInfo itemInfo = typeof(InventoryItemUI).GetField("Item", BindingFlags.Instance | BindingFlags.NonPublic);
         static FieldInfo directoryInfo = typeof(InventoryItemUI).GetField("Directory", BindingFlags.Instance | BindingFlags.NonPublic);
