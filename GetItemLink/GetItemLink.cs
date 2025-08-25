@@ -11,8 +11,8 @@ using System.Reflection;
 
 namespace GetItemLink
 {
-    [BepInDependency("ResoniteModding.BepInExResoniteShim")]
-    [ResonitePlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION, MyPluginInfo.PLUGIN_AUTHORS, MyPluginInfo.PLUGIN_REPOSITORY_URL)]
+    [BepInDependency(BepInExResoniteShim.PluginMetadata.GUID)]
+    [ResonitePlugin(PluginMetadata.GUID, PluginMetadata.NAME, PluginMetadata.VERSION, PluginMetadata.AUTHORS, PluginMetadata.REPOSITORY_URL)]
     public class GetItemLink : BasePlugin
     {
         public override void Load() => HarmonyInstance.PatchAll();
